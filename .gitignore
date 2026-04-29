@@ -1,0 +1,10 @@
+node_modules/
+.env
+database.sqlite
+uploads/
+public/audio/
+voices/*.onnx
+voices/*.json
+__pycache__/
+*.wav
+*.mp3
