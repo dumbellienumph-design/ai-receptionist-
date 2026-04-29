@@ -5,83 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | RECEPTAI</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        .stat-card { text-align: left; }
-        .stat-value { font-size: 2rem; font-weight: 700; margin-top: 0.5rem; }
-        .call-log-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        .call-log-table th { text-align: left; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; padding: 1rem; border-bottom: 1px solid var(--border-zinc); }
-        .call-log-table td { padding: 1rem; border-bottom: 1px solid var(--border-zinc); font-size: 0.875rem; }
-        .badge { padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; }
-        .badge-booked { background: #064e3b; color: #34d399; }
-        .badge-routed { background: #451a03; color: #fbbf24; }
-        .badge-answered { background: #171717; color: #a1a1aa; border: 1px solid var(--border-zinc); }
-    </style>
 </head>
-<body>
+<body style="padding-bottom: 5rem;">
     <nav>
         <div class="logo">RECEPTAI</div>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <span id="businessName" style="font-size: 0.875rem; color: var(--text-secondary);"></span>
+        <div>
+            <a href="onboarding.html" class="btn">Configure</a>
             <a href="index.html" class="btn">Logout</a>
         </div>
     </nav>
 
-    <main class="container" style="padding: 4rem 0;">
-        <div class="grid grid-3" style="margin-bottom: 3rem;">
-            <div class="card stat-card">
-                <label>Calls Today</label>
-                <div class="stat-value" id="callsToday">0</div>
+    <main class="container" style="padding-top: 4rem;">
+        <header style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Command Center</h1>
+                <p id="business-name" style="color: var(--text-secondary); font-size: 1.125rem;">Live Telephony Overview</p>
             </div>
-            <div class="card stat-card">
-                <label>Appts Booked</label>
-                <div class="stat-value" id="apptsBooked">0</div>
+            <div id="status-indicator" style="display: flex; align-items: center; gap: 0.5rem; color: #10b981; font-weight: 600; font-size: 0.875rem;">
+                <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #10b981;"></span>
+                SYSTEMS OPERATIONAL
             </div>
-            <div class="card stat-card">
-                <label>Routed to Human</label>
-                <div class="stat-value" id="callsRouted">0</div>
+        </header>
+
+        <!-- Stats Bento -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value" id="total-calls">0</span>
+                <span class="stat-label">Total Calls</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="booked-calls">0</span>
+                <span class="stat-label">Appointments</span>
+                <div class="wave-container" id="booked-wave" style="opacity: 0.3;">
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="routed-calls">0</span>
+                <span class="stat-label">Human Handover</span>
             </div>
         </div>
 
-        <div class="grid" style="grid-template-columns: 2fr 1fr;">
-            <div class="card">
-                <h3 style="margin-bottom: 1.5rem;">Live Call Log</h3>
-                <table class="call-log-table">
-                    <thead>
-                        <tr>
-                            <th>Caller</th>
-                            <th>Duration</th>
-                            <th>Outcome</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="callLogs">
-                        <!-- Dynamic content -->
-                    </tbody>
-                </table>
+        <div class="grid-2">
+            <!-- Active Logs -->
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem; display: flex; justify-content: space-between;">
+                    Recent Transcripts
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 400;">Updated real-time</span>
+                </h3>
+                <div id="call-logs">
+                    <!-- Logs injected here -->
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No calls recorded today.</p>
+                </div>
             </div>
 
-            <div class="grid" style="gap: 1.5rem;">
-                <div class="card">
-                    <h3 style="margin-bottom: 1.5rem;">Quick Actions</h3>
-                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="testCall()">Trigger Test Call</button>
-                    <button class="btn" style="width: 100%;" onclick="openKnowledgeBase()">Update Knowledge</button>
+            <!-- Knowledge Base Sidebar -->
+            <div>
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Core Knowledge</h3>
+                    <p id="knowledge-preview" style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6; max-height: 200px; overflow-y: auto;">
+                        Loading configuration...
+                    </p>
+                    <button class="btn" style="width: 100%; margin-top: 1.5rem;" onclick="openKnowledgeBase()">Update Intelligence</button>
                 </div>
+
                 <div class="card">
-                    <h3 style="margin-bottom: 1rem;">System Status</h3>
-                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span color="var(--text-secondary)">Gemini 1.5 Flash</span>
-                        <span style="color: #34d399;">● Cloud Online</span>
+                    <h3 style="margin-bottom: 1rem;">Quick Simulator</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem;">Test your AI's response logic directly.</p>
+                    <div class="form-group">
+                        <input type="text" id="sim-input" placeholder="Type what a caller would say...">
                     </div>
-                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span color="var(--text-secondary)">Twilio STT</span>
-                        <span style="color: #34d399;">● Cloud Online</span>
-                    </div>
-                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between;">
-                        <span color="var(--text-secondary)">Amazon Polly TTS</span>
-                        <span style="color: #34d399;">● Cloud Online</span>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="simulateCall()">Test Brain</button>
+                    <div id="sim-output" style="margin-top: 1.5rem; font-size: 0.875rem; padding: 1rem; background: var(--bg-black); border: 1px dashed var(--border-zinc); display: none;">
+                        <!-- AI Response here -->
                     </div>
                 </div>
             </div>
@@ -91,39 +88,76 @@
     <script>
         async function loadDashboard() {
             try {
-                const response = await fetch('/api/dashboard-data');
-                const data = await response.json();
+                const res = await fetch('/api/dashboard-data');
+                const data = await res.json();
                 
-                document.getElementById('businessName').innerText = data.business.name;
-                document.getElementById('callsToday').innerText = data.stats.totalToday;
-                document.getElementById('apptsBooked').innerText = data.stats.booked;
-                document.getElementById('callsRouted').innerText = data.stats.routed;
+                if (data.business) {
+                    document.getElementById('business-name').textContent = `${data.business.name} | ${data.business.industry}`;
+                    document.getElementById('knowledge-preview').textContent = data.business.knowledge_base || "No intelligence provided.";
+                    
+                    document.getElementById('total-calls').textContent = data.stats.totalToday;
+                    document.getElementById('booked-calls').textContent = data.stats.booked;
+                    document.getElementById('routed-calls').textContent = data.stats.routed;
 
-                const logsContainer = document.getElementById('callLogs');
-                logsContainer.innerHTML = data.calls.map(call => `
-                    <tr>
-                        <td>${call.caller_number}</td>
-                        <td>${call.duration_seconds}s</td>
-                        <td><span class="badge badge-${call.outcome}">${call.outcome}</span></td>
-                        <td>${new Date(call.timestamp).toLocaleTimeString()}</td>
-                    </tr>
-                `).join('');
+                    const logContainer = document.getElementById('call-logs');
+                    if (data.calls.length > 0) {
+                        logContainer.innerHTML = data.calls.map(call => `
+                            <div class="call-item outcome-${call.outcome}">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600; font-size: 0.875rem;">${call.caller_number}</span>
+                                    <span class="badge badge-${call.outcome}">${call.outcome}</span>
+                                </div>
+                                <p style="font-size: 0.875rem; color: var(--text-secondary); font-style: italic;">"${call.transcript}"</p>
+                                <span style="font-size: 0.7rem; color: #444; margin-top: 0.5rem; display: block;">${new Date(call.timestamp).toLocaleString()}</span>
+                            </div>
+                        `).join('');
+                    }
+                }
             } catch (err) {
-                console.error('Failed to load dashboard:', err);
+                console.error("Dashboard Load Error:", err);
             }
         }
 
-        function testCall() {
-            alert('Simulating test call sequence...');
-            // In a real app, this would trigger a Twilio outbound call to the user's verified number
+        async function simulateCall() {
+            const input = document.getElementById('sim-input').value;
+            const output = document.getElementById('sim-output');
+            if (!input) return;
+
+            output.style.display = 'block';
+            output.textContent = "AI is thinking...";
+            output.style.color = "var(--text-secondary)";
+
+            try {
+                // Mocking the webhook processing for the simulator
+                const res = await fetch('/webhook/process-speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        SpeechResult: input,
+                        From: '+1555-SIMULATOR',
+                        To: '+17753647456' // Using your default number
+                    })
+                });
+                
+                const twiml = await res.text();
+                // Extract text from <Say> tags
+                const match = twiml.match(/<Say[^>]*>([^<]+)<\/Say>/);
+                const aiText = match ? match[1] : "Call outcome processed.";
+                
+                output.innerHTML = `<strong>AI:</strong> ${aiText}`;
+                output.style.color = "var(--text-primary)";
+                loadDashboard(); // Refresh stats
+            } catch (err) {
+                output.textContent = "Error connecting to server.";
+            }
         }
 
         function openKnowledgeBase() {
-            window.location.href = 'onboarding.html#step4'; // Simple redirect for now
+            window.location.href = 'onboarding.html';
         }
 
         loadDashboard();
-        setInterval(loadDashboard, 5000); // Polling every 5s
+        setInterval(loadDashboard, 5000);
     </script>
 </body>
 </html>

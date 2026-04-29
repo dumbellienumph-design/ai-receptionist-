@@ -151,13 +151,101 @@ input:focus, textarea:focus {
     border-color: var(--text-secondary);
 }
 
-/* Hero Specific */
-.hero {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 8rem 0;
+/* Dashboard Specific */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
+
+.stat-card {
+    background: var(--surface-zinc);
+    border: 1px solid var(--border-zinc);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--text-secondary);
+}
+
+.stat-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Wave Animation */
+.wave-container {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.wave-bar {
+    width: 3px;
+    height: 10px;
+    background: var(--text-primary);
+    border-radius: 10px;
+    animation: wave 1s ease-in-out infinite;
+}
+
+@keyframes wave {
+    0%, 100% { height: 10px; }
+    50% { height: 30px; }
+}
+
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+.call-item {
+    background: var(--surface-zinc);
+    border-left: 4px solid var(--border-zinc);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 0 8px 8px 0;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.outcome-booked { border-left-color: #10b981; }
+.outcome-routed { border-left-color: #3b82f6; }
+.outcome-answered { border-left-color: #a1a1aa; }
+
+.badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-booked { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.badge-routed { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.badge-answered { background: rgba(161, 161, 170, 0.1); color: #a1a1aa; }
+
 
 @media (max-width: 768px) {
     .grid-3, .grid-2 { grid-template-columns: 1fr; }
