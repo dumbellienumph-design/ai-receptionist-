@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | RECEPTAI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .stat-card { text-align: left; }
+        .stat-value { font-size: 2rem; font-weight: 700; margin-top: 0.5rem; }
+        .call-log-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .call-log-table th { text-align: left; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; padding: 1rem; border-bottom: 1px solid var(--border-zinc); }
+        .call-log-table td { padding: 1rem; border-bottom: 1px solid var(--border-zinc); font-size: 0.875rem; }
+        .badge { padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 2px; }
+        .badge-booked { background: #064e3b; color: #34d399; }
+        .badge-routed { background: #451a03; color: #fbbf24; }
+        .badge-answered { background: #171717; color: #a1a1aa; border: 1px solid var(--border-zinc); }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">RECEPTAI</div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <span id="businessName" style="font-size: 0.875rem; color: var(--text-secondary);"></span>
+            <a href="index.html" class="btn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 0;">
+        <div class="grid grid-3" style="margin-bottom: 3rem;">
+            <div class="card stat-card">
+                <label>Calls Today</label>
+                <div class="stat-value" id="callsToday">0</div>
+            </div>
+            <div class="card stat-card">
+                <label>Appts Booked</label>
+                <div class="stat-value" id="apptsBooked">0</div>
+            </div>
+            <div class="card stat-card">
+                <label>Routed to Human</label>
+                <div class="stat-value" id="callsRouted">0</div>
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: 2fr 1fr;">
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Live Call Log</h3>
+                <table class="call-log-table">
+                    <thead>
+                        <tr>
+                            <th>Caller</th>
+                            <th>Duration</th>
+                            <th>Outcome</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="callLogs">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid" style="gap: 1.5rem;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Quick Actions</h3>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="testCall()">Trigger Test Call</button>
+                    <button class="btn" style="width: 100%;" onclick="openKnowledgeBase()">Update Knowledge</button>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">System Status</h3>
+                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span color="var(--text-secondary)">Gemini 1.5 Flash</span>
+                        <span style="color: #34d399;">● Cloud Online</span>
+                    </div>
+                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span color="var(--text-secondary)">Twilio STT</span>
+                        <span style="color: #34d399;">● Cloud Online</span>
+                    </div>
+                    <div style="font-size: 0.875rem; display: flex; justify-content: space-between;">
+                        <span color="var(--text-secondary)">Amazon Polly TTS</span>
+                        <span style="color: #34d399;">● Cloud Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/dashboard-data');
+                const data = await response.json();
+                
+                document.getElementById('businessName').innerText = data.business.name;
+                document.getElementById('callsToday').innerText = data.stats.totalToday;
+                document.getElementById('apptsBooked').innerText = data.stats.booked;
+                document.getElementById('callsRouted').innerText = data.stats.routed;
+
+                const logsContainer = document.getElementById('callLogs');
+                logsContainer.innerHTML = data.calls.map(call => `
+                    <tr>
+                        <td>${call.caller_number}</td>
+                        <td>${call.duration_seconds}s</td>
+                        <td><span class="badge badge-${call.outcome}">${call.outcome}</span></td>
+                        <td>${new Date(call.timestamp).toLocaleTimeString()}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load dashboard:', err);
+            }
+        }
+
+        function testCall() {
+            alert('Simulating test call sequence...');
+            // In a real app, this would trigger a Twilio outbound call to the user's verified number
+        }
+
+        function openKnowledgeBase() {
+            window.location.href = 'onboarding.html#step4'; // Simple redirect for now
+        }
+
+        loadDashboard();
+        setInterval(loadDashboard, 5000); // Polling every 5s
+    </script>
+</body>
+</html>

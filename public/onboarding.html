@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding | RECEPTAI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+        .progress-bar {
+            height: 2px;
+            background: var(--border-zinc);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--text-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">RECEPTAI</div>
+    </nav>
+
+    <main class="container" style="max-width: 600px; padding: 4rem 0;">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="onboardingForm">
+            <!-- Step 1: Business Info -->
+            <div class="step active" id="step1">
+                <h2 class="display-title" style="font-size: 2rem;">Business Profile</h2>
+                <p class="subheadline">Tell us about your business.</p>
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" name="name" required placeholder="Acme Corp">
+                </div>
+                <div class="form-group">
+                    <label>Industry</label>
+                    <input type="text" name="industry" required placeholder="Legal Services">
+                </div>
+                <div class="form-group">
+                    <label>Target Phone (for routing)</label>
+                    <input type="tel" name="target_phone" required placeholder="+1234567890">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next Step</button>
+            </div>
+
+            <!-- Step 2: Twilio Setup -->
+            <div class="step" id="step2">
+                <h2 class="display-title" style="font-size: 2rem;">Twilio Config</h2>
+                <p class="subheadline">Connect your communication layer.</p>
+                <div class="form-group">
+                    <label>Account SID</label>
+                    <input type="text" name="twilio_sid" required placeholder="AC...">
+                </div>
+                <div class="form-group">
+                    <label>Auth Token</label>
+                    <input type="password" name="twilio_auth_token" required placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Twilio Phone Number</label>
+                    <input type="tel" name="twilio_phone" required placeholder="+1...">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn" onclick="nextStep(1)">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next Step</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Voice Selection -->
+            <div class="step" id="step3">
+                <h2 class="display-title" style="font-size: 2rem;">Voice Identity</h2>
+                <p class="subheadline">Choose how your AI sounds.</p>
+                <div class="form-group">
+                    <label>Select Piper Voice</label>
+                    <select name="voice_choice">
+                        <option value="en_US-lessac-medium">Standard Male (Lessac)</option>
+                        <option value="en_US-amy-medium">Natural Female (Amy)</option>
+                        <option value="en_US-ryan-high">Deep Male (Ryan)</option>
+                        <option value="en_US-kristin-medium">Professional Female (Kristin)</option>
+                        <option value="custom">Upload Custom Voice (.wav)</option>
+                    </select>
+                </div>
+                <div id="customVoiceUpload" class="form-group" style="display: none;">
+                    <label>Upload Voice File</label>
+                    <input type="file" name="voice_file" accept=".wav,.mp3">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn" onclick="nextStep(2)">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(4)">Next Step</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Training -->
+            <div class="step" id="step4">
+                <h2 class="display-title" style="font-size: 2rem;">Knowledge Base</h2>
+                <p class="subheadline">Paste your FAQs, pricing, and business logic.</p>
+                <div class="form-group">
+                    <label>AI Instructions & Knowledge</label>
+                    <textarea name="knowledge_base" rows="10" placeholder="Hours: 9am-5pm... Pricing: $50 per session..."></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn" onclick="nextStep(3)">Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(5)">Next Step</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Cal.com -->
+            <div class="step" id="step5">
+                <h2 class="display-title" style="font-size: 2rem;">Booking Integration</h2>
+                <p class="subheadline">Connect Cal.com to automate appointments.</p>
+                <div class="form-group">
+                    <label>Cal.com API Key</label>
+                    <input type="password" name="cal_api_key" placeholder="cal_...">
+                </div>
+                <div class="form-group">
+                    <label>Event Type ID</label>
+                    <input type="text" name="cal_event_type_id" placeholder="123456">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn" onclick="nextStep(4)">Back</button>
+                    <button type="submit" class="btn btn-primary">Complete Setup</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            currentStep = step;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const fill = document.getElementById('progressFill');
+            fill.style.width = ((currentStep - 1) / (totalSteps - 1)) * 100 + '%';
+        }
+
+        document.querySelector('select[name="voice_choice"]').addEventListener('change', function(e) {
+            document.getElementById('customVoiceUpload').style.display = e.target.value === 'custom' ? 'block' : 'none';
+        });
+
+        document.getElementById('onboardingForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/onboard', {
+                    method: 'POST',
+                    body: formData // Use FormData for potential file upload
+                });
+                
+                if (response.ok) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Error saving configuration.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to connect to server.');
+            }
+        };
+    </script>
+</body>
+</html>
